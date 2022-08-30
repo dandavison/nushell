@@ -325,7 +325,7 @@ fn make_clickable_link(
         format!(
             "\x1b]8;;{}\x1b\\{}\x1b]8;;\x1b\\",
             match Url::from_file_path(full_path.clone()) {
-                Ok(url) => url.to_string(),
+                Ok(url) => url.to_string().replacen("file", "file-line-column", 1),
                 Err(_) => full_path.clone(),
             },
             link_name.unwrap_or(full_path.as_str())
