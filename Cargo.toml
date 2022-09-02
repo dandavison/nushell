@@ -117,6 +117,9 @@ inherits = "dev"
 strip = false
 debug = false
 
+[profile.test]
+opt-level = 3
+
 # Main nu binary
 [[bin]]
 name = "nu"
