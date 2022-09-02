@@ -117,7 +117,7 @@ inherits = "dev"
 strip = false
 debug = false
 
-# Use optimized binary to decrease test run time (added to see if github actions is caching compilation results)
+# Use optimized binary to decrease test run time (added to see if github actions is caching compilation results 2)
 [profile.test]
 opt-level = 2
 
