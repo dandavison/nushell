@@ -117,6 +117,7 @@ inherits = "dev"
 strip = false
 debug = false
 
+# Use optimized binary to decrease test run time
 [profile.test]
 opt-level = 3
 
