@@ -17,4 +17,4 @@ nu-ansi-term = "0.46.0"
 nu-protocol = { path = "../nu-protocol", version = "0.68.2" }
 strip-ansi-escapes = "0.1.1"
 atty = "0.2.14"
-tabled = { version = "0.8.0", features = ["color"] }
+tabled = { path = "/Users/ddavison/src/nushell/tabled", features = ["color"] }

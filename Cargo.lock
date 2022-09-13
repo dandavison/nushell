@@ -4978,13 +4978,12 @@ dependencies = [
 [[package]]
 name = "tabled"
 version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e5b2f8c37d26d87d2252187b0a45ea3cbf42baca10377c7e7eaaa2800fa9bf97"
 dependencies = [
  "ansi-str",
  "papergrid",
  "tabled_derive",
  "unicode-width",
+ "vte-ansi-iterator",
 ]
 
 [[package]]
@@ -5528,6 +5527,19 @@ dependencies = [
  "arrayvec 0.5.2",
  "utf8parse",
  "vte_generate_state_changes",
+]
+
+[[package]]
+name = "vte-ansi-iterator"
+version = "0.0.1"
+dependencies = [
+ "ansi_term",
+ "console",
+ "itertools",
+ "lazy_static",
+ "unicode-segmentation",
+ "unicode-width",
+ "vte",
 ]
 
 [[package]]
