@@ -17,4 +17,6 @@ nu-ansi-term = "0.46.0"
 nu-protocol = { path = "../nu-protocol", version = "0.68.2" }
 strip-ansi-escapes = "0.1.1"
 atty = "0.2.14"
-tabled = { path = "/Users/ddavison/src/nushell/tabled", features = ["color"] }
+tabled = { git = "https://github.com/dandavison/tabled.git", branch = "v0.8.0-vte-ansi-iterator-hyperlinks", features = [
+    "color"
+] }

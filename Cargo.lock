@@ -4978,6 +4978,7 @@ dependencies = [
 [[package]]
 name = "tabled"
 version = "0.8.0"
+source = "git+https://github.com/dandavison/tabled.git?branch=v0.8.0-vte-ansi-iterator-hyperlinks#f6598599519badf19c4be5579a1710c5ea609dea"
 dependencies = [
  "ansi-str",
  "papergrid",
@@ -5532,6 +5533,7 @@ dependencies = [
 [[package]]
 name = "vte-ansi-iterator"
 version = "0.0.1"
+source = "git+https://github.com/dandavison/tabled.git?branch=v0.8.0-vte-ansi-iterator-hyperlinks#f6598599519badf19c4be5579a1710c5ea609dea"
 dependencies = [
  "ansi_term",
  "console",
