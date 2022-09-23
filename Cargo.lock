@@ -4079,7 +4079,7 @@ dependencies = [
 [[package]]
 name = "reedline"
 version = "0.11.0"
-source = "git+https://github.com/nushell/reedline?branch=main#710393a0375860709e368d0ba8c5883a6e44e673"
+source = "git+https://github.com/dandavison/reedline.git?branch=redacted-hints#03d9ae9b78f9a6580294fd385d2dd46067768912"
 dependencies = [
  "chrono",
  "crossterm 0.24.0",
@@ -4087,6 +4087,7 @@ dependencies = [
  "gethostname",
  "itertools",
  "nu-ansi-term",
+ "regex",
  "rusqlite",
  "serde",
  "serde_json",
@@ -5907,3 +5908,8 @@ dependencies = [
  "cc",
  "libc",
 ]
+
+[[patch.unused]]
+name = "reedline"
+version = "0.11.0"
+source = "git+https://github.com/nushell/reedline?branch=main#710393a0375860709e368d0ba8c5883a6e44e673"
