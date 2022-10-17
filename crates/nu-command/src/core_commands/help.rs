@@ -229,6 +229,18 @@ fn help(
                     span: head,
                 });
 
+                cols.push("input".into());
+                vals.push(Value::String {
+                    val: decl.signature().input_shape.to_string(),
+                    span: head,
+                });
+
+                cols.push("output".into());
+                vals.push(Value::String {
+                    val: decl.signature().output_shape.to_string(),
+                    span: head,
+                });
+
                 cols.push("category".into());
                 vals.push(Value::String {
                     val: sig.category.to_string(),
