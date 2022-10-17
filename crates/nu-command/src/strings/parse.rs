@@ -30,6 +30,8 @@ impl Command for Parse {
                 SyntaxShape::String,
                 "the pattern to match. Eg) \"{foo}: {bar}\"",
             )
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::Table)
             .switch("regex", "use full regex syntax for patterns", Some('r'))
             .category(Category::Strings)
     }

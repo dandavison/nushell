@@ -32,6 +32,8 @@ impl Command for SubCommand {
 
     fn signature(&self) -> Signature {
         Signature::build("str substring")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::String)
             .required(
                 "range",
                 SyntaxShape::Any,

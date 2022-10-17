@@ -25,6 +25,8 @@ impl Command for BuildString {
     fn signature(&self) -> nu_protocol::Signature {
         Signature::build("build-string")
             .rest("rest", SyntaxShape::String, "list of string")
+            .input_shape(SyntaxShape::List(Box::new(SyntaxShape::String)))
+            .output_shape(SyntaxShape::String)
             .category(Category::Strings)
     }
 

@@ -16,6 +16,8 @@ impl Command for SubCommand {
 
     fn signature(&self) -> Signature {
         Signature::build("str distance")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::Record)
             .required(
                 "compare-string",
                 SyntaxShape::String,

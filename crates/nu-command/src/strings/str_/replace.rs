@@ -26,6 +26,8 @@ impl Command for SubCommand {
 
     fn signature(&self) -> Signature {
         Signature::build("str replace")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::String)
             .required("find", SyntaxShape::String, "the pattern to find")
             .required("replace", SyntaxShape::String, "the replacement pattern")
             .rest(
