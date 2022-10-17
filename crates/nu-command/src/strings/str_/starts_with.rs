@@ -23,6 +23,8 @@ impl Command for SubCommand {
 
     fn signature(&self) -> Signature {
         Signature::build("str starts-with")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::Boolean)
             .required("string", SyntaxShape::String, "the string to match")
             .rest(
                 "rest",
