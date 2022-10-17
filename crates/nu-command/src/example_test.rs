@@ -5,7 +5,7 @@ use nu_parser::parse;
 #[cfg(test)]
 use nu_protocol::{
     engine::{Command, EngineState, Stack, StateWorkingSet},
-    PipelineData, Span, Value,
+    PipelineData, Span, SyntaxShape, Value,
 };
 
 #[cfg(test)]
@@ -22,6 +22,7 @@ pub fn test_examples(cmd: impl Command + 'static) {
     use crate::BuildString;
 
     let examples = cmd.examples();
+    let signature_output_shape = cmd.signature().output_shape;
     let mut engine_state = Box::new(EngineState::new());
 
     let delta = {
@@ -67,6 +68,33 @@ pub fn test_examples(cmd: impl Command + 'static) {
         // Skip tests that don't have results to compare to
         if example.result.is_none() {
             continue;
+        }
+        // I will move everything inside the pattern match to avoid the unwrap but leaving
+        // it like this for now to keep the diff clear.
+        let expected_result = example.result.as_ref().unwrap();
+        match signature_output_shape {
+            SyntaxShape::Any => {
+                // Any is the default; remove this branch when output_shape declarations have
+                // been added for all commands.
+            }
+            // TODO: Examples using column paths will fail this test, since the output type is often
+            // different when column paths are used. Detect such examples and handle appropriately.
+
+            // TODO: Introduce a rule to nushell stating that flags and positional arguments may not
+            // alter the output type. So, for example, `first` returns the first item but we will
+            // get rid of `first n` since that changes the return type, and the functionality is
+            // already available under the name `take`. Another example of something that would not
+            // be allowed is `transpose -d`.
+            _ => assert_eq!(
+                expected_result.get_type().to_shape(),
+                signature_output_shape,
+                "Example result type does not match declared command output type"
+            ),
+            // TODO: The above works for output; but we want to test that the Example input matches
+            // the declared input type also. Obtain the input syntax shape from the Example and
+            // check that it matches the declared Signature.input_shape. This may involve
+            // refactoring the way that Examples are defined so that the input command is available
+            // as a separate field?
         }
         let start = std::time::Instant::now();
 
