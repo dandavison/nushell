@@ -17,6 +17,8 @@ impl Command for SubCommand {
 
     fn signature(&self) -> Signature {
         Signature::build("str contains")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::Boolean)
             .required("string", SyntaxShape::String, "the string to find")
             .rest(
                 "rest",

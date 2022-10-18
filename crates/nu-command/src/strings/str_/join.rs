@@ -16,6 +16,8 @@ impl Command for StrJoin {
 
     fn signature(&self) -> Signature {
         Signature::build("str join")
+            .input_shape(SyntaxShape::List(Box::new(SyntaxShape::String)))
+            .output_shape(SyntaxShape::String)
             .optional(
                 "separator",
                 SyntaxShape::String,

@@ -5,7 +5,7 @@ use nu_parser::parse;
 #[cfg(test)]
 use nu_protocol::{
     engine::{Command, EngineState, Stack, StateWorkingSet},
-    PipelineData, Span, Value,
+    PipelineData, Span, SyntaxShape, Value,
 };
 
 #[cfg(test)]
@@ -22,6 +22,7 @@ pub fn test_examples(cmd: impl Command + 'static) {
     use crate::BuildString;
 
     let examples = cmd.examples();
+    let signature_output_shape = cmd.signature().output_shape;
     let mut engine_state = Box::new(EngineState::new());
 
     let delta = {
@@ -67,6 +68,20 @@ pub fn test_examples(cmd: impl Command + 'static) {
         // Skip tests that don't have results to compare to
         if example.result.is_none() {
             continue;
+        }
+        // I will move everything inside the pattern match to avoid the unwrap but leaving
+        // it like this for now to keep the diff clear.
+        let expected_result = example.result.unwrap();
+        match signature_output_shape {
+            SyntaxShape::Any => {
+                // Any is the default; remove this branch when output_shape declarations have
+                // been added for all commands.
+            }
+            _ => assert_eq!(
+                expected_result.get_type().to_shape(),
+                signature_output_shape,
+                "Example result type does not match declared command output type"
+            ),
         }
         let start = std::time::Instant::now();
 
@@ -135,13 +150,11 @@ pub fn test_examples(cmd: impl Command + 'static) {
                 // Note. Value implements PartialEq for Bool, Int, Float, String and Block
                 // If the command you are testing requires to compare another case, then
                 // you need to define its equality in the Value struct
-                if let Some(expected) = example.result {
-                    if result != expected {
-                        panic!(
-                            "the example result is different to expected value: {:?} != {:?}",
-                            result, expected
-                        )
-                    }
+                if result != expected_result {
+                    panic!(
+                        "the example result is different to expected value: {:?} != {:?}",
+                        result, expected_result
+                    )
                 }
             }
         }

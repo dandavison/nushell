@@ -22,6 +22,8 @@ impl Command for SubCommand {
 
     fn signature(&self) -> Signature {
         Signature::build("str lpad")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::String)
             .required_named("length", SyntaxShape::Int, "length to pad to", Some('l'))
             .required_named(
                 "character",

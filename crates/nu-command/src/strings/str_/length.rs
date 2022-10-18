@@ -15,6 +15,8 @@ impl Command for SubCommand {
 
     fn signature(&self) -> Signature {
         Signature::build("str length")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::Int)
             .rest(
                 "rest",
                 SyntaxShape::CellPath,

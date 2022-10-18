@@ -27,6 +27,8 @@ impl Command for SubCommand {
 
     fn signature(&self) -> Signature {
         Signature::build("str index-of")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::Int)
             .required("string", SyntaxShape::String, "the string to find index of")
             .rest(
                 "rest",

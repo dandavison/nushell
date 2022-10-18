@@ -113,6 +113,8 @@ pub struct Signature {
     pub named: Vec<Flag>,
     pub input_type: Type,
     pub output_type: Type,
+    pub input_shape: SyntaxShape,
+    pub output_shape: SyntaxShape,
     pub is_filter: bool,
     pub creates_scope: bool,
     // Signature category used to classify commands stored in the list of declarations
@@ -144,6 +146,8 @@ impl Signature {
             rest_positional: None,
             input_type: Type::Any,
             output_type: Type::Any,
+            input_shape: SyntaxShape::Any,
+            output_shape: SyntaxShape::Any,
             named: vec![],
             is_filter: false,
             creates_scope: false,
@@ -332,6 +336,18 @@ impl Signature {
     /// Changes the output type of the command signature
     pub fn output_type(mut self, output_type: Type) -> Signature {
         self.output_type = output_type;
+        self
+    }
+
+    /// Set the input shape of the command signature
+    pub fn input_shape(mut self, input_shape: SyntaxShape) -> Signature {
+        self.input_shape = input_shape;
+        self
+    }
+
+    /// Set the output shape of the command signature
+    pub fn output_shape(mut self, output_shape: SyntaxShape) -> Signature {
+        self.output_shape = output_shape;
         self
     }
 
