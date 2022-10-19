@@ -27,6 +27,8 @@ impl Command for DetectColumns {
                 "number of rows to skip before detecting",
                 Some('s'),
             )
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::Table)
             .switch("no-headers", "don't detect headers", Some('n'))
             .category(Category::Strings)
     }

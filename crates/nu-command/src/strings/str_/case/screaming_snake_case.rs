@@ -16,6 +16,8 @@ impl Command for SubCommand {
 
     fn signature(&self) -> Signature {
         Signature::build("str screaming-snake-case")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::String)
             .rest(
                 "rest",
                 SyntaxShape::CellPath,

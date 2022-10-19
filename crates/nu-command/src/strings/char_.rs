@@ -162,6 +162,8 @@ impl Command for Char {
                 "the name of the character to output",
             )
             .rest("rest", SyntaxShape::Any, "multiple Unicode bytes")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::String)
             .switch("list", "List all supported character names", Some('l'))
             .switch("unicode", "Unicode string i.e. 1f378", Some('u'))
             .switch("integer", "Create a codepoint from an integer", Some('i'))

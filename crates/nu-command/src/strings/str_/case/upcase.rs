@@ -13,11 +13,14 @@ impl Command for SubCommand {
     }
 
     fn signature(&self) -> Signature {
-        Signature::build("str upcase").rest(
-            "rest",
-            SyntaxShape::CellPath,
-            "optionally upcase text by column paths",
-        )
+        Signature::build("str upcase")
+            .input_shape(SyntaxShape::String)
+            .output_shape(SyntaxShape::String)
+            .rest(
+                "rest",
+                SyntaxShape::CellPath,
+                "optionally upcase text by column paths",
+            )
     }
 
     fn usage(&self) -> &str {
