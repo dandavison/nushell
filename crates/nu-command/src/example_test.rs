@@ -25,6 +25,7 @@ pub fn test_examples(cmd: impl Command + 'static) {
     use crate::BuildString;
 
     let examples = cmd.examples();
+    let signature_input_shape = cmd.signature().input_shape;
     let signature_output_shape = cmd.signature().output_shape;
     let mut engine_state = Box::new(EngineState::new());
 
@@ -72,9 +73,41 @@ pub fn test_examples(cmd: impl Command + 'static) {
         if example.result.is_none() {
             continue;
         }
+        // TODO: relax this, and do it less hackily
+        let num_pipes = example.example.chars().filter(|c| *c == '|').count();
+        assert_eq!(
+            num_pipes, 1,
+            "Code examples should contain one '|' character"
+        );
+        // Check that the declared command input shape matches the example input.
+        //
+        // This requires evaluating the input expression. It will be evaluated again below, as part
+        // of the full example pipeline. To avoid this we could:
+        // (1) Supply input explicitly as a Value instead of as part of an unparsed pipeline expression.
+        // (2) Fake the pipeline evaluation by evaluating the first expression independently and
+        //     passing the result to the second expression.
+        // Neither of these seem attractive.
+        if let Some((example_command_1, _)) = example.example.split_once("|") {
+            let empty_input = PipelineData::new(Span::test_data());
+            let example_input = eval(example_command_1, empty_input, &cwd, &mut engine_state);
+            match signature_input_shape {
+                SyntaxShape::Any => {
+                    // Any is the default; remove this branch when input_shape declarations have
+                    // been added for all commands.
+                }
+                _ => assert_eq!(
+                    example_input.get_type().to_shape(),
+                    signature_input_shape,
+                    "Example input type does not match declared command input type"
+                ),
+            }
+        }
+
         // I will move everything inside the pattern match to avoid the unwrap but leaving
         // it like this for now to keep the diff clear.
         let expected_result = example.result.as_ref().unwrap();
+
+        // Check that the declared command output shape matches the example expected output
         match signature_output_shape {
             SyntaxShape::Any => {
                 // Any is the default; remove this branch when output_shape declarations have
