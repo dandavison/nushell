@@ -1,12 +1,15 @@
 #[cfg(test)]
-use nu_engine::eval_block;
+use nu_engine;
 #[cfg(test)]
-use nu_parser::parse;
+use nu_parser;
 #[cfg(test)]
 use nu_protocol::{
-    engine::{Command, EngineState, Stack, StateWorkingSet},
+    ast::Block,
+    engine::{Command, EngineState, Stack, StateDelta, StateWorkingSet},
     PipelineData, Span, SyntaxShape, Value,
 };
+#[cfg(test)]
+use std::path::PathBuf;
 
 #[cfg(test)]
 use crate::To;
@@ -113,65 +116,74 @@ pub fn test_examples(cmd: impl Command + 'static) {
             .merge_env(&mut stack, &cwd)
             .expect("Error merging environment");
 
-        let (block, delta) = {
-            let mut working_set = StateWorkingSet::new(&*engine_state);
-            let (output, err) = parse(
-                &mut working_set,
-                None,
-                example.example.as_bytes(),
-                false,
-                &[],
-            );
+        let empty_input = PipelineData::new(Span::test_data());
+        let result = eval(example.example, empty_input, &cwd, &mut engine_state);
 
-            if let Some(err) = err {
-                panic!("test parse error in `{}`: {:?}", example.example, err)
-            }
+        println!("input: {}", example.example);
+        println!("result: {:?}", result);
+        println!("done: {:?}", start.elapsed());
 
-            (output, working_set.render())
-        };
-
-        engine_state
-            .merge_delta(delta)
-            .expect("Error merging delta");
-
-        let mut stack = Stack::new();
-
-        // Set up PWD
-        stack.add_env_var(
-            "PWD".to_string(),
-            Value::String {
-                val: cwd.to_string_lossy().to_string(),
-                span: Span::test_data(),
-            },
-        );
-
-        match eval_block(
-            &engine_state,
-            &mut stack,
-            &block,
-            PipelineData::new(Span::test_data()),
-            true,
-            true,
-        ) {
-            Err(err) => panic!("test eval error in `{}`: {:?}", example.example, err),
-            Ok(result) => {
-                let result = result.into_value(Span::test_data());
-                println!("input: {}", example.example);
-                println!("result: {:?}", result);
-                println!("done: {:?}", start.elapsed());
-
-                // Note. Value implements PartialEq for Bool, Int, Float, String and Block
-                // If the command you are testing requires to compare another case, then
-                // you need to define its equality in the Value struct
-                if let Some(expected) = example.result {
-                    if result != expected {
-                        panic!(
-                            "the example result is different to expected value: {:?} != {:?}",
-                            result, expected
-                        )
-                    }
-                }
+        // Note. Value implements PartialEq for Bool, Int, Float, String and Block
+        // If the command you are testing requires to compare another case, then
+        // you need to define its equality in the Value struct
+        if let Some(expected) = example.result {
+            if result != expected {
+                panic!(
+                    "the example result is different to expected value: {:?} != {:?}",
+                    result, expected
+                )
             }
         }
+    }
+}
+
+#[cfg(test)]
+fn eval(
+    contents: &str,
+    input: PipelineData,
+    cwd: &PathBuf,
+    engine_state: &mut Box<EngineState>,
+) -> Value {
+    let (block, delta) = parse(contents, engine_state);
+    eval_block(block, input, cwd, engine_state, delta)
+}
+
+#[cfg(test)]
+fn parse(contents: &str, engine_state: &Box<EngineState>) -> (Block, StateDelta) {
+    let mut working_set = StateWorkingSet::new(&*engine_state);
+    let (output, err) = nu_parser::parse(&mut working_set, None, contents.as_bytes(), false, &[]);
+
+    if let Some(err) = err {
+        panic!("test parse error in `{}`: {:?}", contents, err)
+    }
+
+    (output, working_set.render())
+}
+
+#[cfg(test)]
+fn eval_block(
+    block: Block,
+    input: PipelineData,
+    cwd: &PathBuf,
+    engine_state: &mut Box<EngineState>,
+    delta: StateDelta,
+) -> Value {
+    engine_state
+        .merge_delta(delta)
+        .expect("Error merging delta");
+
+    let mut stack = Stack::new();
+
+    stack.add_env_var(
+        "PWD".to_string(),
+        Value::String {
+            val: cwd.to_string_lossy().to_string(),
+            span: Span::test_data(),
+        },
+    );
+
+    match nu_engine::eval_block(&engine_state, &mut stack, &block, input, true, true) {
+        Err(err) => panic!("test eval error in `{}`: {:?}", "TODO", err),
+        Ok(result) => result.into_value(Span::test_data()),
     }
 }
