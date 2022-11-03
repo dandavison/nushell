@@ -30,6 +30,10 @@ pub enum Type {
 }
 
 impl Type {
+    pub fn is_numeric(&self) -> bool {
+        matches!(self, Type::Int | Type::Float | Type::Number)
+    }
+
     pub fn to_shape(&self) -> SyntaxShape {
         match self {
             Type::Int => SyntaxShape::Int,
