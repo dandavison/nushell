@@ -38,7 +38,7 @@ mod test_examples {
                 check_example_input_and_output_types_match_command_signature(
                     &example,
                     &cwd,
-                    &mut make_engine_state(cmd.clone_box()),
+                    &mut engine_state,
                     &signature.input_output_types,
                     signature.operates_on_cell_paths(),
                     signature.vectorizes_over_list,
