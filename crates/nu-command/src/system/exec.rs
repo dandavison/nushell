@@ -1,7 +1,7 @@
 use super::run_external::ExternalCommand;
 use nu_engine::{current_dir, env_to_strings, CallExt};
 use nu_protocol::{
-    ast::{Call, Expr},
+    ast::{Argument, Call, Expr},
     engine::{Command, EngineState, Stack},
     Category, Example, PipelineData, ShellError, Signature, Spanned, SyntaxShape,
 };
@@ -18,6 +18,7 @@ impl Command for Exec {
     fn signature(&self) -> Signature {
         Signature::build("exec")
             .required("command", SyntaxShape::String, "the command to execute")
+            .any_switch()
             .rest(
                 "rest",
                 SyntaxShape::String,
@@ -68,10 +69,21 @@ fn exec(
     let name: Spanned<String> = call.req(engine_state, stack, 0)?;
     let name_span = name.span;
 
-    let args: Vec<Spanned<String>> = call.rest(engine_state, stack, 1)?;
+    let mut args: Vec<Spanned<String>> = Vec::new();
+    let mut arg_keep_raw = vec![];
+    for arg in call.arguments.iter() {
+        if let Argument::Named((s, _, _)) = arg {
+            args.push(Spanned {
+                item: format!("-{}", s.item),
+                span: s.span,
+            });
+            arg_keep_raw.push(true);
+        }
+    }
+    args.extend(call.rest(engine_state, stack, 1)?);
+
     let args_expr: Vec<nu_protocol::ast::Expression> =
         call.positional_iter().skip(1).cloned().collect();
-    let mut arg_keep_raw = vec![];
     for one_arg_expr in args_expr {
         match one_arg_expr.expr {
             // refer to `parse_dollar_expr` function
