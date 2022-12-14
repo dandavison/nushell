@@ -411,6 +411,22 @@ impl Signature {
         self
     }
 
+    /// Add all single-letter switches to the signature
+    pub fn any_switch(mut self) -> Signature {
+        for c in ('a'..='z').chain('A'..='Z') {
+            self.named.push(Flag {
+                long: c.to_string(),
+                short: Some(c),
+                arg: None,
+                required: false,
+                desc: "".into(),
+                var_id: None,
+                default_value: None,
+            });
+        }
+        self
+    }
+
     /// Changes the input type of the command signature
     pub fn input_type(mut self, input_type: Type) -> Signature {
         self.input_type = input_type;
